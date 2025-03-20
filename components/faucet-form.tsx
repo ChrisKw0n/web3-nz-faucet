@@ -1,72 +1,90 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
-import { Loader2, AlertCircle, CheckCircle2 } from "lucide-react"
-import { useToast } from "@/hooks/use-toast"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { sendEth } from "@/app/actions/faucet-actions"
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { sendEth } from "@/app/actions/faucet-actions";
 
 const formSchema = z.object({
   address: z
     .string()
     .min(1, { message: "Ethereum address is required" })
-    .regex(/^0x[a-fA-F0-9]{40}$/, { message: "Invalid Ethereum address format" }),
-})
+    .regex(/^0x[a-fA-F0-9]{40}$/, {
+      message: "Invalid Ethereum address format",
+    }),
+});
 
 export function FaucetForm() {
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [txHash, setTxHash] = useState<string | null>(null)
-  const [error, setError] = useState<string | null>(null)
-  const { toast } = useToast()
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [txHash, setTxHash] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       address: "",
     },
-  })
+  });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsSubmitting(true)
-    setError(null)
-    setTxHash(null)
+    setIsSubmitting(true);
+    setError(null);
+    setTxHash(null);
 
     try {
-      const result = await sendEth(values.address)
+      const result = await sendEth(values.address);
 
       if (result.success) {
-        setTxHash(result.txHash!)
+        setTxHash(result.txHash!);
         toast({
           title: "ETH sent successfully!",
           description: `Transaction hash: ${result.txHash}`,
-        })
-        form.reset()
+        });
+        form.reset();
       } else {
-        setError(result.error || "Unknown error occurred")
+        setError(result.error || "Unknown error occurred");
         toast({
           variant: "destructive",
           title: "Failed to send ETH",
           description: result.error,
-        })
+        });
       }
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "An unexpected error occurred"
-      setError(errorMessage)
+      const errorMessage =
+        error instanceof Error ? error.message : "An unexpected error occurred";
+      setError(errorMessage);
       toast({
         variant: "destructive",
         title: "Error",
         description: "An unexpected error occurred. Please try again later.",
-      })
-      console.error(error)
+      });
+      console.error(error);
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
   }
 
@@ -88,7 +106,11 @@ export function FaucetForm() {
                 <FormItem>
                   <FormLabel>Ethereum Address</FormLabel>
                   <FormControl>
-                    <Input placeholder="0x..." {...field} className="bg-gray-700 border-gray-600 text-white" />
+                    <Input
+                      placeholder="0x..."
+                      {...field}
+                      className="bg-gray-700 border-gray-600 text-white"
+                    />
                   </FormControl>
                   <FormDescription className="text-gray-400">
                     Enter a valid Ethereum address starting with 0x
@@ -99,7 +121,10 @@ export function FaucetForm() {
             />
 
             {error && (
-              <Alert variant="destructive" className="bg-red-900/50 border-red-800">
+              <Alert
+                variant="destructive"
+                className="bg-red-900/50 border-red-800"
+              >
                 <AlertCircle className="h-4 w-4" />
                 <AlertTitle>Error</AlertTitle>
                 <AlertDescription>{error}</AlertDescription>
@@ -125,23 +150,23 @@ export function FaucetForm() {
               </Alert>
             )}
 
-            <Button type="submit" className="w-full bg-purple-600 hover:bg-purple-700" disabled={isSubmitting}>
+            <Button
+              type="submit"
+              className="w-full bg-purple-600 hover:bg-purple-700"
+              disabled={isSubmitting}
+            >
               {isSubmitting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Sending ETH...
                 </>
               ) : (
-                "Request 0.05 ETH"
+                "Request ETH"
               )}
             </Button>
           </form>
         </Form>
       </CardContent>
-      <CardFooter className="text-sm text-gray-400 border-t border-gray-700 pt-4">
-        Limited to one request per address every 24 hours
-      </CardFooter>
     </Card>
-  )
+  );
 }
-

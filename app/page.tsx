@@ -1,5 +1,4 @@
 import { FaucetForm } from "@/components/faucet-form";
-import { TransactionHistory } from "@/components/transaction-history";
 
 export default function Home() {
   return (
@@ -12,14 +11,14 @@ export default function Home() {
           </h2>
           <p className="text-gray-300 max-w-2xl mx-auto">
             Request Sepolia ETH for testing and development during the
-            hackathon. Each request provides 0.05 ETH and is limited to once per
-            address every 24 hours.
+            hackathon. This is a no fuss faucet, no social logins or
+            restrictions for new developers. Please be considerate for other
+            hackers and only request what you need.
           </p>
         </header>
 
         <div className="grid gap-8 md:grid-cols-1">
           <FaucetForm />
-          <TransactionHistory />
         </div>
 
         <footer className="mt-16 text-center text-gray-400 text-sm">

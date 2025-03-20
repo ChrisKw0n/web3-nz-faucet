@@ -33,15 +33,6 @@ type SendEthResult = {
   error?: string;
 };
 
-// Helper function to check if an address is on cooldown
-async function isOnCooldown(address: string): Promise<boolean> {
-  const lastRequest = cooldowns.get(address.toLowerCase());
-  if (!lastRequest) return false;
-
-  const now = Date.now();
-  return now - lastRequest < COOLDOWN_PERIOD;
-}
-
 // Helper function to set cooldown for an address
 async function setCooldown(address: string): Promise<void> {
   cooldowns.set(address.toLowerCase(), Date.now());
@@ -99,14 +90,6 @@ export async function sendEth(address: string): Promise<SendEthResult> {
     return { success: false, error: "Invalid Ethereum address" };
   }
 
-  // Check cooldown
-  if (await isOnCooldown(address)) {
-    return {
-      success: false,
-      error: "This address has already received ETH in the last 24 hours",
-    };
-  }
-
   try {
     // Get a working provider
     const provider = await getWorkingProvider();
@@ -128,7 +111,7 @@ export async function sendEth(address: string): Promise<SendEthResult> {
     if (balance < requiredAmount) {
       return {
         success: false,
-        error: "The faucet is out of funds. Please contact the administrator.",
+        error: "The faucet is out of funds. Please wait for it to be refilled.",
       };
     }
 
