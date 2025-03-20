@@ -22,7 +22,7 @@ export default function Home() {
         </div>
 
         <footer className="mt-16 text-center text-gray-400 text-sm">
-          <p className="mt-2">Created by Chris Kwon from UOABC</p>
+          <p className="mt-2">Created by Chris Kwon</p>
         </footer>
       </div>
     </main>
