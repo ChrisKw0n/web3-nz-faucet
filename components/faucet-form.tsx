@@ -161,7 +161,7 @@ export function FaucetForm() {
                   Sending ETH...
                 </>
               ) : (
-                "Request ETH"
+                "Request 0.05 ETH"
               )}
             </Button>
           </form>
